@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS Sport</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            position: relative;
+            text-decoration: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -3px;
+            width: 0%;
+            height: 2px;
+            background: #ff3131;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        /* HERO */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bg-video {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgb(0 0 0 / 40%);
+        }
+
+        .hero-content {
+            text-align: center;
+            padding: 0 20px;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+        }
+
+        .hero-content p {
+            margin: 15px 0 30px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .shop-btn {
+            padding: 14px 35px;
+            border-radius: 50px;
+            color: #fff;
+            text-decoration: none;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: 0.3s;
+        }
+
+        .shop-btn:hover {
+            background: #ff3131;
+            border-color: #ff3131;
+        }
+
+        /* RECOMMENDED SECTION */
+        .scroll-products {
+            padding: 60px 8%;
+            background: #0a0a0a;
+        }
+
+        .scroll-products h2 {
+            margin-bottom: 20px;
+        }
+
+        .scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            scroll-behavior: smooth;
+            padding-bottom: 10px;
+        }
+
+        .scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product-item {
+            min-width: 200px;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 15px;
+            flex-shrink: 0;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .product-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .product-item img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .product-item span {
+            color: #ff3131;
+            font-weight: bold;
+        }
+
+        /* CATEGORIES */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+            gap: 25px;
+            padding: 60px 8%;
+            background: #111;
+        }
+
+        .category-card {
+            background: white;
+            color: black;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .category-card h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 10px;
+        }
+
+        .grid img {
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        /* PRODUCT MODAL */
+        .product-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            width: 90%;
+            max-width: 900px;
+            height: 85vh;
+            border-radius: 20px;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #fff;
+            z-index: 10;
+        }
+
+        .modal-gallery {
+            width: 50%;
+            height: 100%;
+            overflow-y: scroll;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #000;
+        }
+
+        .modal-gallery img {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .modal-gallery::-webkit-scrollbar { width: 5px; }
+        .modal-gallery::-webkit-scrollbar-thumb { background: #ff3131; border-radius: 10px; }
+
+        .modal-details {
+            width: 50%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .modal-details h2 { font-size: 2.2rem; margin-bottom: 10px; color: #fff; }
+        .modal-details .price { color: #ff3131; font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; }
+        .modal-details .desc { color: #ccc; line-height: 1.6; margin-bottom: 25px; }
+
+        .qty-input { margin-bottom: 25px; }
+        .qty-input input {
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            width: 60px;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .buy-now-btn {
+            background: #ff3131;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .buy-now-btn:hover { background: #ff5252; transform: scale(1.02); }
+
+        /* CONTACT SECTION */
+        .contact-section { padding: 80px 8%; background: #000; }
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            background: #111;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #222;
+        }
+
+        .contact-info h2 { font-size: 2.5rem; margin-bottom: 20px; color: #ff3131; }
+        .contact-info p { color: #888; margin-bottom: 30px; }
+        .info-item { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .info-item span { color: #ff3131; font-weight: 600; }
+
+        .social-links { margin-top: 30px; display: flex; gap: 15px; }
+        .social-links a {
+            width: 40px; height: 40px; background: #222;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; color: #fff; text-decoration: none; transition: 0.3s;
+        }
+        .social-links a:hover { background: #ff3131; transform: translateY(-5px); }
+
+        .contact-form { display: flex; flex-direction: column; gap: 15px; }
+        .contact-form input, .contact-form textarea {
+            padding: 15px; background: #1a1a1a; border: 1px solid #333;
+            border-radius: 8px; color: #fff; font-size: 14px;
+        }
+        .contact-form textarea { height: 120px; resize: none; }
+        .submit-btn {
+            background: #ff3131; color: #fff; border: none; padding: 15px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+        .submit-btn:hover { background: #cc2828; }
+
+        /* MOBILE DESIGN ADJUSTMENTS */
+        @media(max-width:768px){
+            /* Nav */
+            .menu-btn { display: block; color: #fff; }
+            .nav-links {
+                position: absolute;
+                top: 70px; right: 0;
+                width: 100%;
+                background: rgba(0,0,0,0.95);
+                flex-direction: column;
+                align-items: center;
+                display: none;
+                padding: 40px 0;
+            }
+            .nav-links.active { display: flex; }
+            
+            /* Hero */
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-content p { font-size: 14px; }
+
+            /* Recommended - Stack Vertically */
+            .scroll-container {
+                flex-direction: column;
+                gap: 20px;
+                overflow-x: hidden;
+            }
+            .product-item {
+                min-width: 100%;
+                padding: 20px;
+            }
+
+            /* Categories - Full Width Cards */
+            .categories {
+                grid-template-columns: 1fr;
+                padding: 40px 5%;
+            }
+
+            /* Modal */
+            .modal-content { 
+                flex-direction: column; 
+                height: 95vh; 
+                width: 95%;
+            }
+            .modal-gallery, .modal-details { 
+                width: 100%; 
+            }
+            .modal-gallery { 
+                height: 40%; 
+            }
+            .modal-details {
+                padding: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+            }
+            .modal-details h2 { font-size: 1.5rem; }
+
+            /* Contact */
+            .contact-section { padding: 40px 5%; }
+            .contact-container { 
+                grid-template-columns: 1fr; 
+                padding: 25px;
+            }
+            .contact-info h2 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="logo"><img src="logo.png" alt="PS Sport"></div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#">Home</a></li>
+        <li><a href="#product-item">Shop</a></li>
+        <li><a href="#categories">Collections</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+</nav>
+
+<section class="hero">
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="bg-video.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+    <div class="hero-content">
+        <h1>PUSH YOUR LIMITS</h1>
+        <p>Premium sportswear designed for performance.</p>
+        <a href="#product-item" class="shop-btn">Shop Now</a>
+    </div>
+</section>
+
+<section class="scroll-products" id="product-item">
+    <h2>Recommended for You</h2>
+    <div class="scroll-container">
+        <div class="product-item" 
+             data-desc="Premium cotton blend t-shirt with moisture-wicking technology for your hardest workouts." 
+             data-imgs='["product\batn1.jpeg", "product\batinf.jpeg", "product\man with bat.jpeg"]'> 
+            <img src="product\batn1.jpeg" alt="T-Shirt">
+            <p>Sport T-Shirt</p>
+            <span>₹999</span>
+        </div>
+
+        <div class="product-item" 
+             data-desc="Ultra-light running shoes with responsive foam cushioning and breathable mesh upper." 
+             data-imgs='["p2.jpg", "p2.jpg", "p2.jpg"]'>
+            <img src="p2.jpg" alt="Shoes">
+            <p>Running Shoes</p>
+            <span>₹2499</span>
+        </div>
+
+        <div class="product-item" 
+             data-desc="Heavyweight fleece hoodie designed to keep you warm during outdoor training sessions." 
+             data-imgs='["product\ban2.jpeg", "product\bat2info.jpeg", "product\batn20.jpeg"]'>
+            <img src="product\ban2.jpeg" alt="Hoodie">
+            <p>Gym Hoodie</p>
+            <span>₹1999</span>
+        </div>
+
+        <div class="product-item" 
+             data-desc="Smart sports watch with heart rate monitoring, GPS tracking, and 10-day battery life." 
+             data-imgs='["p4.jpg", "p4.jpg", "p4.jpg"]'>
+            <img src="p4.jpg" alt="Watch">
+            <p>Sports Watch</p>
+            <span>₹2999</span>
+        </div>
+    </div>
+</section>
+
+<section class="categories" id="categories">
+    <div class="category-card">
+        <h3>Min. 30% off</h3>
+        <div class="grid">
+            <img src="bat1.jpeg"> <img src="bat2.jpeg">
+            <img src="bat3.jpeg"> <img src="bat4.jpeg">
+        </div>
+    </div>
+    <div class="category-card">
+        <h3>Trending Products</h3>
+        <div class="grid">
+            <img src="shoes1.jpeg"> <img src="shoes2.jpeg">
+            <img src="shoes3.jpeg"> <img src="shoes4.jpeg">
+        </div>
+    </div>
+    <div class="category-card">
+        <h3>Best Sellers</h3>
+        <div class="grid">
+            <img src="c9.jpg"> <img src="c10.jpg">
+            <img src="c11.jpg"> <img src="c12.jpg">
+        </div>
+    </div>
+    <div class="category-card">
+        <h3>New Collection</h3>
+        <div class="grid">
+            <img src="c13.jpg"> <img src="c14.jpg">
+            <img src="c15.jpg"> <img src="c16.jpg">
+        </div>
+    </div>
+</section>
+
+<div class="product-modal" id="productModal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div class="modal-gallery" id="modalGallery"></div>
+        <div class="modal-details">
+            <h2 id="modalTitle">Product Name</h2>
+            <p class="price" id="modalPrice">₹0</p>
+            <p class="desc" id="modalDesc">Description goes here.</p>
+            <div class="qty-input">
+                <label>Quantity:</label>
+                <input type="number" id="modalQty" value="1" min="1">
+            </div>
+            <button class="buy-now-btn">Buy Now</button>
+        </div>
+    </div>
+</div>
+
+<form id="hiddenOrderForm" action="https://formspree.io/f/xvzdrvpj" method="POST" style="display:none;">
+    <input type="text" name="Product" id="formProduct">
+    <input type="text" name="Price" id="formPrice">
+    <input type="text" name="Quantity" id="formQty">
+    <input type="text" name="Customer_Phone" id="formPhone">
+    <input type="text" name="_subject" id="formSubject">
+</form>
+
+<section class="contact-section" id="contact">
+    <div class="contact-container">
+        <div class="contact-info">
+            <h2>GET IN TOUCH</h2>
+            <p>Have a question about our gear or your order? We're here to help.</p>
+            <div class="info-item"><span>📍 Address:</span> 123 Fitness Ave, Sport City, SC 45678</div>
+            <div class="info-item"><span>📞 Mobile:</span> +91 98765 43210</div>
+            <div class="info-item"><span>✉️ Email:</span> support@pssport.com</div>
+            <div class="social-links">
+                <a href="#">Fb</a> <a href="#">Ig</a> <a href="#">X</a> <a href="#">Yt</a>
+            </div>
+        </div>
+        <form action="https://formspree.io/f/xvzdrvpj" method="POST" class="contact-form">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <input type="text" name="subject" placeholder="Subject">
+            <textarea name="message" placeholder="Your Message" required></textarea>
+            <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+    </div>
+</section>
+
+<script>
+    function toggleMenu() {
+        document.getElementById("navLinks").classList.toggle("active");
+    }
+
+    const modal = document.getElementById("productModal");
+    const modalGallery = document.getElementById("modalGallery");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalPrice = document.getElementById("modalPrice");
+    const modalDesc = document.getElementById("modalDesc");
+
+    // Open Modal logic
+    document.querySelectorAll('.product-item').forEach(item => {
+        item.addEventListener('click', () => {
+            modalGallery.innerHTML = '';
+            const title = item.querySelector('p').innerText;
+            const price = item.querySelector('span').innerText;
+            const desc = item.getAttribute('data-desc');
+            const images = JSON.parse(item.getAttribute('data-imgs'));
+
+            modalTitle.innerText = title;
+            modalPrice.innerText = price;
+            modalDesc.innerText = desc;
+
+            images.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                modalGallery.appendChild(img);
+            });
+
+            modal.style.display = 'flex';
+        });
+    });
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) { closeModal(); }
+    }
+
+    // BUY NOW LOGIC
+    document.querySelector('.buy-now-btn').addEventListener('click', function() {
+        const productName = modalTitle.innerText;
+        const productPrice = modalPrice.innerText;
+        const qty = document.getElementById("modalQty").value;
+        const ownerNumber = "918788228810"; 
+        
+        const userPhone = prompt("Please enter your mobile number to confirm order:", "");
+        
+        if (!userPhone) {
+            alert("Mobile number is required!");
+            return;
+        }
+
+        // Email backup
+        document.getElementById("formProduct").value = productName;
+        document.getElementById("formPrice").value = productPrice;
+        document.getElementById("formQty").value = qty;
+        document.getElementById("formPhone").value = userPhone;
+        document.getElementById("formSubject").value = "NEW ORDER: " + productName;
+        
+        const hiddenForm = document.getElementById("hiddenOrderForm");
+        
+        fetch(hiddenForm.action, {
+            method: hiddenForm.method,
+            body: new FormData(hiddenForm),
+            headers: { 'Accept': 'application/json' }
+        }).then(response => {
+            if (response.ok) { console.log("Email backup sent."); }
+        });
+
+        // WhatsApp redirect
+        const message = `New Order Request:%0A- Product: ${productName}%0A- Price: ${productPrice}%0A- Quantity: ${qty}%0A- Customer Phone: ${userPhone}`;
+        const whatsappUrl = `https://wa.me/${ownerNumber}?text=${message}`;
+        window.open(whatsappUrl, '_blank');
+
+        alert("Request Sent! We will contact you soon.");
+        closeModal();
+    });
+</script>
+
+</body>
+</html>
